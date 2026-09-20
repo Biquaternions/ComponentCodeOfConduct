@@ -79,11 +79,11 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
     public static class KickMessages {
 
         @Key("dialog-does-not-exist")
-        private String dialogDoesNotExistString = "";
+        private String dialogDoesNotExistString = "<red>Unable to join this server at this time</red>";
         public transient Component dialogDoesNotExist;
 
         @Key("disagree-button-clicked")
-        private String disagreeButtonClickedString = "";
+        private String disagreeButtonClickedString = "<red>You hate Paper-chan :(</red>";
         public transient Component disagreeButtonClicked;
 
     }

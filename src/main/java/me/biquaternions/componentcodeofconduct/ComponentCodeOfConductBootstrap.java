@@ -46,7 +46,7 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
                 try (final Stream<Path> paths = Files.list(context.getDataDirectory())) {
 
                     paths.filter(Files::isRegularFile)
-                            .filter(path -> path.endsWith(".yml"))
+                            .filter(path -> path.toString().endsWith(".yml"))
                             .forEach(path -> {
 
                                 final String pathString = path.getFileName().toString();

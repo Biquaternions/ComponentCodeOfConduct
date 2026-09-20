@@ -78,9 +78,9 @@ public class PlayerListener implements Listener {
         final Key buttonDisagree = CodeOfConductKeys.getButtonDisagreeKey(locale);
         final Key key = event.getIdentifier();
         if (key.equals(buttonAgree)) {
-            this.setConnectionAgreement(profileId, false);
-        } else if (key.equals(buttonDisagree)) {
             this.setConnectionAgreement(profileId, true);
+        } else if (key.equals(buttonDisagree)) {
+            this.setConnectionAgreement(profileId, false);
         }
     }
 

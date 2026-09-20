@@ -14,15 +14,15 @@ public class CodeOfConductKeys {
     private final String BASE_KEY = "code_of_conduct";
 
     public Key getDialogKey(final Locale locale) {
-        return Key.key(NAMESPACE, String.format("%s/%s/dialog", BASE_KEY, locale));
+        return Key.key(NAMESPACE, String.format("%s/%s/dialog", BASE_KEY, locale.toString().toLowerCase(Locale.ROOT)));
     }
 
     public Key getButtonAgreeKey(final Locale locale) {
-        return Key.key(NAMESPACE, String.format("%s/%s/button/agree", BASE_KEY, locale));
+        return Key.key(NAMESPACE, String.format("%s/%s/button/agree", BASE_KEY, locale.toString().toLowerCase(Locale.ROOT)));
     }
 
     public Key getButtonDisagreeKey(final Locale locale) {
-        return Key.key(NAMESPACE, String.format("%s/%s/button/disagree", BASE_KEY, locale));
+        return Key.key(NAMESPACE, String.format("%s/%s/button/disagree", BASE_KEY, locale.toString().toLowerCase(Locale.ROOT)));
     }
 
 

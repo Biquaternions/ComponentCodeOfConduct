@@ -15,18 +15,17 @@ public class ButtonConfiguration {
 
     @Key("label")
     private String labelString;
-    public transient Component label;
+    public transient Component label = Component.empty();
 
     @Key("tooltip")
     private String tooltipString;
-    public transient Component tooltip;
+    public transient Component tooltip = Component.empty();
 
     public ButtonConfiguration(final String labelString, final String tooltipString) {
         this.labelString = labelString;
         this.tooltipString = tooltipString;
     }
 
-    @PostInject
     public void convert() {
         this.label = MiniMessage.miniMessage().deserialize(this.labelString);
         this.tooltip = MiniMessage.miniMessage().deserialize(this.tooltipString);

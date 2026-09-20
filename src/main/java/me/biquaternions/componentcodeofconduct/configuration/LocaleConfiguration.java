@@ -93,6 +93,9 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
         MiniMessage miniMessage = MiniMessage.miniMessage();
         this.codeOfConduct.title = miniMessage.deserialize(this.codeOfConduct.titleString);
         this.codeOfConduct.body = this.codeOfConduct.bodyStrings.stream().map(miniMessage::deserialize).toList();
+        this.codeOfConduct.agree.convert();
+        this.codeOfConduct.disagree.convert();
+
         this.kickMessages.dialogDoesNotExist = miniMessage.deserialize(this.kickMessages.dialogDoesNotExistString);
         this.kickMessages.disagreeButtonClicked = miniMessage.deserialize(this.kickMessages.disagreeButtonClickedString);
     }

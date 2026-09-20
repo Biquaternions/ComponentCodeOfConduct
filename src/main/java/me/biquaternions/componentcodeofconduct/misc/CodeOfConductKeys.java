@@ -2,12 +2,28 @@ package me.biquaternions.componentcodeofconduct.misc;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.key.Key;
+import org.jspecify.annotations.NullMarked;
 
+import java.util.Locale;
+
+@NullMarked
 @UtilityClass
-public class CocKeys {
+public class CodeOfConductKeys {
 
-    public final Key DIALOG_KEY = Key.key("componentcodeofconduct", "code_of_conduct");
-    public final Key DIALOG_BUTTON_AGREE = Key.key("componentcodeofconduct", "code_of_conduct/agree");
-    public final Key DIALOG_BUTTON_DISAGREE = Key.key("componentcodeofconduct", "code_of_conduct/disgree");
+    private final String NAMESPACE = "componentcodeofconduct";
+    private final String BASE_KEY = "code_of_conduct";
+
+    public Key getDialogKey(final Locale locale) {
+        return Key.key(NAMESPACE, String.format("%s/%s/dialog", BASE_KEY, locale));
+    }
+
+    public Key getButtonAgreeKey(final Locale locale) {
+        return Key.key(NAMESPACE, String.format("%s/%s/button/agree", BASE_KEY, locale));
+    }
+
+    public Key getButtonDisagreeKey(final Locale locale) {
+        return Key.key(NAMESPACE, String.format("%s/%s/button/disagree", BASE_KEY, locale));
+    }
+
 
 }

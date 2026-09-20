@@ -2,9 +2,9 @@ name: ComponentCodeOfConduct
 description: $description
 version: '${version}'
 
-main: me.biquaternions.componentCodeOfConduct.ComponentCodeOfConduct
-bootstrapper: me.biquaternions.componentCodeOfConduct.ComponentCodeOfConductBootstrap
-api-version: '26.1.1'
+main: me.biquaternions.componentcodeofconduct.ComponentCodeOfConduct
+bootstrapper: me.biquaternions.componentcodeofconduct.ComponentCodeOfConductBootstrap
+api-version: '26.1'
 load: STARTUP
 
 authors: [ Biquaternions ]

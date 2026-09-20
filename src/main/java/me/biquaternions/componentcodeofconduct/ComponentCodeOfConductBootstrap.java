@@ -64,21 +64,20 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
                                 Key dialogKey = CodeOfConductKeys.getDialogKey(locale);
                                 event.registry().register(DialogKeys.create(dialogKey), builder -> {
                                     // From the paper docs :o
-                                    builder.base(
-                                            DialogBase.builder(config.codeOfConduct.title)
+                                    builder.base(DialogBase.builder(config.codeOfConduct.title)
                                                     .canCloseWithEscape(false)
                                                     .body(config.codeOfConduct.body.stream().map(DialogBody::plainMessage).toList())
                                                     .build()
                                             ).type(
                                                     DialogType.confirmation(
-                                                    ActionButton.builder(config.codeOfConduct.agree.label)
-                                                            .tooltip(config.codeOfConduct.agree.tooltip)
-                                                            .action(DialogAction.customClick(CodeOfConductKeys.getButtonAgreeKey(locale), null))
-                                                            .build(),
-                                                    ActionButton.builder(config.codeOfConduct.disagree.label)
-                                                            .tooltip(config.codeOfConduct.disagree.tooltip)
-                                                            .action(DialogAction.customClick(CodeOfConductKeys.getButtonDisagreeKey(locale), null))
-                                                            .build()
+                                                            ActionButton.builder(config.codeOfConduct.disagree.label)
+                                                                    .tooltip(config.codeOfConduct.disagree.tooltip)
+                                                                    .action(DialogAction.customClick(CodeOfConductKeys.getButtonDisagreeKey(locale), null))
+                                                                    .build(),
+                                                            ActionButton.builder(config.codeOfConduct.agree.label)
+                                                                    .tooltip(config.codeOfConduct.agree.tooltip)
+                                                                    .action(DialogAction.customClick(CodeOfConductKeys.getButtonAgreeKey(locale), null))
+                                                                    .build()
                                             ));
                                 });
                                 CodeOfConductService.putConfigurationForKey(dialogKey, config);

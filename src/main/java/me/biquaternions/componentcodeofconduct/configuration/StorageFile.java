@@ -1,7 +1,7 @@
 package me.biquaternions.componentcodeofconduct.configuration;
 
+import de.bsommerfeld.jshepherd.annotation.Key;
 import de.bsommerfeld.jshepherd.annotation.PostInject;
-import de.bsommerfeld.jshepherd.annotation.Section;
 import de.bsommerfeld.jshepherd.core.ConfigurablePojo;
 import me.biquaternions.componentcodeofconduct.configuration.types.AcceptedHashConfiguration;
 import org.jspecify.annotations.NullMarked;
@@ -12,7 +12,7 @@ import java.util.List;
 @SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class StorageFile extends ConfigurablePojo<StorageFile> {
 
-    @Section("accepted-hashes")
+    @Key("accepted-hashes")
     public List<AcceptedHashConfiguration> acceptedHashes = List.of();
 
     @PostInject

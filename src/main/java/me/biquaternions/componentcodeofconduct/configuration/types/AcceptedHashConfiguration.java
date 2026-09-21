@@ -2,15 +2,15 @@ package me.biquaternions.componentcodeofconduct.configuration.types;
 
 import de.bsommerfeld.jshepherd.annotation.Key;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import me.biquaternions.componentcodeofconduct.util.BinaryUtils;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.UUID;
 
 @NullMarked
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@SuppressWarnings({"FieldMayBeFinal", "unused"})
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@SuppressWarnings({"NotNullFieldNotInitialized", "FieldMayBeFinal", "unused"})
 public class AcceptedHashConfiguration {
 
     @Key("uuid")

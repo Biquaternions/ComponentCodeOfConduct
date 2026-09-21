@@ -6,6 +6,8 @@ import de.bsommerfeld.jshepherd.annotation.Section;
 import de.bsommerfeld.jshepherd.core.ConfigurablePojo;
 import de.bsommerfeld.jshepherd.core.ConfigurationLoader;
 import me.biquaternions.componentcodeofconduct.configuration.types.ButtonConfiguration;
+import me.biquaternions.componentcodeofconduct.types.CodeOfConductWrapper;
+import me.biquaternions.componentcodeofconduct.util.BinaryUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jspecify.annotations.NullMarked;
@@ -18,8 +20,8 @@ import java.util.List;
 public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
 
     @SuppressWarnings("NullAway.Init")
-    private static LocaleConfiguration FALLBACK;
-    public static LocaleConfiguration getFallback() {
+    private static CodeOfConductWrapper FALLBACK;
+    public static CodeOfConductWrapper getFallback() {
         return FALLBACK;
     }
 
@@ -29,10 +31,17 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
             return;
         }
 
-        FALLBACK = ConfigurationLoader.from(dataDirectory.resolve("en_us.yml"))
+        final Path path = dataDirectory.resolve("en_us.yml");
+        final LocaleConfiguration configuration = ConfigurationLoader.from(path)
                 .withComments()
                 .load(LocaleConfiguration::new);
-        FALLBACK.save();
+        configuration.save();
+        final byte[] hash = BinaryUtils.hashFromPath(path);
+        if (hash == null) {
+            throw new IllegalStateException("Failed to calculate hash for en_us.yml");
+        }
+
+        FALLBACK = new CodeOfConductWrapper(configuration, hash);
         INITIALIZED = true;
     }
 

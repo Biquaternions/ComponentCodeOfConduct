@@ -7,9 +7,10 @@ import io.papermc.paper.event.connection.configuration.AsyncPlayerConnectionConf
 import io.papermc.paper.event.player.PlayerCustomClickEvent;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
-import me.biquaternions.componentcodeofconduct.configuration.LocaleConfiguration;
+import me.biquaternions.componentcodeofconduct.concurrent.CodeOfConductFuture;
 import me.biquaternions.componentcodeofconduct.misc.CodeOfConductKeys;
 import me.biquaternions.componentcodeofconduct.service.CodeOfConductService;
+import me.biquaternions.componentcodeofconduct.types.CodeOfConductWrapper;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.key.Key;
@@ -19,7 +20,6 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @NullMarked
 public class PlayerListener implements Listener {
 
-    private final ConcurrentMap<UUID, CompletableFuture<Boolean>> awaitingResponses = new ConcurrentHashMap<>();
+    private final ConcurrentMap<UUID, CodeOfConductFuture> awaitingResponses = new ConcurrentHashMap<>();
 
     @EventHandler
     public void onAsyncPlayerConnectionConfigure(final AsyncPlayerConnectionConfigureEvent event) {
@@ -40,22 +40,26 @@ public class PlayerListener implements Listener {
         final Audience audience = event.getConnection().getAudience();
         final Locale locale = audience.getOrDefault(Identity.LOCALE, Locale.US);
         final Key dialogKey = CodeOfConductKeys.getDialogKey(locale);
-        final LocaleConfiguration config = CodeOfConductService.getConfigurationForKeyOrFallback(dialogKey);
-        final Dialog dialog = RegistryAccess.registryAccess().getRegistry(RegistryKey.DIALOG).get(dialogKey);
-        if (dialog == null) {
-            audience.closeDialog();
-            connection.disconnect(config.kickMessages.dialogDoesNotExist);
+        final CodeOfConductWrapper wrapper = CodeOfConductService.getConfigurationForKeyOrFallback(dialogKey);
+        if (CodeOfConductService.hasAcceptedCoc(profileId, wrapper)) {
             return;
         }
 
-        CompletableFuture<Boolean> response = new CompletableFuture<>();
-        response.completeOnTimeout(false, config.codeOfConduct.timeout, TimeUnit.MINUTES);
+        final Dialog dialog = RegistryAccess.registryAccess().getRegistry(RegistryKey.DIALOG).get(dialogKey);
+        if (dialog == null) {
+            audience.closeDialog();
+            connection.disconnect(wrapper.configuration().kickMessages.dialogDoesNotExist);
+            return;
+        }
+
+        final CodeOfConductFuture response = new CodeOfConductFuture(wrapper);
+        response.completeOnTimeout(false, wrapper.configuration().codeOfConduct.timeout, TimeUnit.MINUTES);
         this.awaitingResponses.put(profileId, response);
         audience.showDialog(dialog);
 
         if (!response.join()) {
             audience.closeDialog();
-            connection.disconnect(config.kickMessages.disagreeButtonClicked);
+            connection.disconnect(wrapper.configuration().kickMessages.disagreeButtonClicked);
         }
 
         this.awaitingResponses.remove(profileId);
@@ -90,9 +94,9 @@ public class PlayerListener implements Listener {
     }
 
     private void setConnectionAgreement(final UUID profileId, final boolean value) {
-        final CompletableFuture<Boolean> future = this.awaitingResponses.get(profileId);
+        final CodeOfConductFuture future = this.awaitingResponses.get(profileId);
         if (future != null) {
-            future.complete(value);
+            future.completeForProfile(profileId, value);
         }
     }
 

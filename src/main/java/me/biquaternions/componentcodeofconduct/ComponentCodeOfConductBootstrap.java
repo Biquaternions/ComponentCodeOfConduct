@@ -14,8 +14,10 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import io.papermc.paper.registry.event.RegistryEvents;
 import io.papermc.paper.registry.keys.DialogKeys;
 import me.biquaternions.componentcodeofconduct.configuration.LocaleConfiguration;
+import me.biquaternions.componentcodeofconduct.configuration.StorageFile;
 import me.biquaternions.componentcodeofconduct.misc.CodeOfConductKeys;
 import me.biquaternions.componentcodeofconduct.service.CodeOfConductService;
+import me.biquaternions.componentcodeofconduct.util.BinaryUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.translation.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +62,13 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
                                         .withComments()
                                         .load(LocaleConfiguration::new);
                                 config.save();
+                                final byte[] hash;
+                                try {
+                                    hash = BinaryUtils.MD.digest(Files.readAllBytes(path));
+                                } catch (IOException exception) {
+                                    context.getLogger().error("Failed to calculate hash for '{}'", path.getFileName(), exception);
+                                    return;
+                                }
 
                                 Key dialogKey = CodeOfConductKeys.getDialogKey(locale);
                                 event.registry().register(DialogKeys.create(dialogKey), builder -> {
@@ -80,7 +89,7 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
                                                                     .build()
                                             ));
                                 });
-                                CodeOfConductService.putConfigurationForKey(dialogKey, config);
+                                CodeOfConductService.putConfigurationForKey(dialogKey, config, hash);
 
                             });
 
@@ -95,7 +104,10 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
 
     @Override
     public JavaPlugin createPlugin(PluginProviderContext context) {
-        return PluginBootstrap.super.createPlugin(context);
+        final Path cacheDirectory = context.getDataDirectory().resolve(".cache");
+        final StorageFile storage = ConfigurationLoader.from(cacheDirectory.resolve("accepted-code-of-conducts.yml"))
+                .load(StorageFile::new);
+        return new ComponentCodeOfConduct(storage);
     }
 
 }

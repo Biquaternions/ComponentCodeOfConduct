@@ -1,7 +1,6 @@
 package me.biquaternions.componentcodeofconduct.configuration.types;
 
 import de.bsommerfeld.jshepherd.annotation.Key;
-import de.bsommerfeld.jshepherd.annotation.PostInject;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
@@ -24,6 +23,7 @@ public class ButtonConfiguration {
     public ButtonConfiguration(final String labelString, final String tooltipString) {
         this.labelString = labelString;
         this.tooltipString = tooltipString;
+        this.convert();
     }
 
     public void convert() {

@@ -14,23 +14,27 @@ import java.util.UUID;
 public class AcceptedHashConfiguration {
 
     @Key("uuid")
-    public UUID uuid;
+    private String uuidString;
+    public transient UUID uuid;
 
     @Key("hash")
     private String hashString;
     public transient byte[] hash;
 
     public AcceptedHashConfiguration(final UUID uuid, final String hashString) {
-        this.uuid = uuid;
+        this.uuidString = uuid.toString();
         this.hashString = hashString;
+        this.convert();
     }
 
     public AcceptedHashConfiguration(final UUID uuid, final byte[] hash) {
-        this.uuid = uuid;
+        this.uuidString = uuid.toString();
         this.hashString = BinaryUtils.HEX.formatHex(hash);
+        this.convert();
     }
 
     public void convert() {
+        this.uuid = UUID.fromString(this.uuidString);
         this.hash = BinaryUtils.HEX.parseHex(this.hashString);
     }
 

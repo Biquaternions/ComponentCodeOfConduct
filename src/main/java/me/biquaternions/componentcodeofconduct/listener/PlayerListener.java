@@ -8,9 +8,9 @@ import io.papermc.paper.event.player.PlayerCustomClickEvent;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import me.biquaternions.componentcodeofconduct.concurrent.CodeOfConductFuture;
+import me.biquaternions.componentcodeofconduct.configuration.LocaleConfiguration;
 import me.biquaternions.componentcodeofconduct.misc.CodeOfConductKeys;
 import me.biquaternions.componentcodeofconduct.service.CodeOfConductService;
-import me.biquaternions.componentcodeofconduct.types.CodeOfConductWrapper;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.key.Key;
@@ -40,26 +40,26 @@ public class PlayerListener implements Listener {
         final Audience audience = event.getConnection().getAudience();
         final Locale locale = audience.getOrDefault(Identity.LOCALE, Locale.US);
         final Key dialogKey = CodeOfConductKeys.getDialogKey(locale);
-        final CodeOfConductWrapper wrapper = CodeOfConductService.getConfigurationForKeyOrFallback(dialogKey);
-        if (CodeOfConductService.hasAcceptedCoc(profileId, wrapper)) {
+        final LocaleConfiguration configuration = CodeOfConductService.getConfigurationForKeyOrFallback(dialogKey);
+        if (CodeOfConductService.hasAcceptedCoc(profileId, configuration)) {
             return;
         }
 
         final Dialog dialog = RegistryAccess.registryAccess().getRegistry(RegistryKey.DIALOG).get(dialogKey);
         if (dialog == null) {
             audience.closeDialog();
-            connection.disconnect(wrapper.configuration().kickMessages.dialogDoesNotExist);
+            connection.disconnect(configuration.kickMessages.dialogDoesNotExist);
             return;
         }
 
-        final CodeOfConductFuture response = new CodeOfConductFuture(wrapper);
-        response.completeOnTimeout(false, wrapper.configuration().codeOfConduct.timeout, TimeUnit.MINUTES);
+        final CodeOfConductFuture response = new CodeOfConductFuture(configuration);
+        response.completeOnTimeout(false, configuration.codeOfConduct.timeout, TimeUnit.MINUTES);
         this.awaitingResponses.put(profileId, response);
         audience.showDialog(dialog);
 
         if (!response.join()) {
             audience.closeDialog();
-            connection.disconnect(wrapper.configuration().kickMessages.disagreeButtonClicked);
+            connection.disconnect(configuration.kickMessages.disagreeButtonClicked);
         }
 
         this.awaitingResponses.remove(profileId);

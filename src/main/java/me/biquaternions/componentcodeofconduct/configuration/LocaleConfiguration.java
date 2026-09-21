@@ -6,12 +6,12 @@ import de.bsommerfeld.jshepherd.annotation.Section;
 import de.bsommerfeld.jshepherd.core.ConfigurablePojo;
 import de.bsommerfeld.jshepherd.core.ConfigurationLoader;
 import me.biquaternions.componentcodeofconduct.configuration.types.ButtonConfiguration;
-import me.biquaternions.componentcodeofconduct.types.CodeOfConductWrapper;
 import me.biquaternions.componentcodeofconduct.util.BinaryUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jspecify.annotations.NullMarked;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -20,8 +20,8 @@ import java.util.List;
 public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
 
     @SuppressWarnings("NullAway.Init")
-    private static CodeOfConductWrapper FALLBACK;
-    public static CodeOfConductWrapper getFallback() {
+    private static LocaleConfiguration FALLBACK;
+    public static LocaleConfiguration getFallback() {
         return FALLBACK;
     }
 
@@ -36,12 +36,8 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
                 .withComments()
                 .load(LocaleConfiguration::new);
         configuration.save();
-        final byte[] hash = BinaryUtils.hashFromPath(path);
-        if (hash == null) {
-            throw new IllegalStateException("Failed to calculate hash for en_us.yml");
-        }
 
-        FALLBACK = new CodeOfConductWrapper(configuration, hash);
+        FALLBACK = configuration;
         INITIALIZED = true;
     }
 
@@ -65,6 +61,7 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
         @Key("body")
         private List<String> bodyStrings = List.of("By joining our server you agree that Paper-chan is cute!");
         public transient List<Component> body;
+        public transient byte[] hash;
 
         @Key("timeout")
         public int timeout = 10;
@@ -102,6 +99,7 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
         MiniMessage miniMessage = MiniMessage.miniMessage();
         this.codeOfConduct.title = miniMessage.deserialize(this.codeOfConduct.titleString);
         this.codeOfConduct.body = this.codeOfConduct.bodyStrings.stream().map(miniMessage::deserialize).toList();
+        this.codeOfConduct.hash = BinaryUtils.MD.digest(String.join("\n", this.codeOfConduct.bodyStrings).getBytes(StandardCharsets.UTF_8));
         this.codeOfConduct.agree.convert();
         this.codeOfConduct.disagree.convert();
 

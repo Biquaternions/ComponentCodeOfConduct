@@ -17,7 +17,6 @@ import me.biquaternions.componentcodeofconduct.configuration.LocaleConfiguration
 import me.biquaternions.componentcodeofconduct.configuration.StorageFile;
 import me.biquaternions.componentcodeofconduct.misc.CodeOfConductKeys;
 import me.biquaternions.componentcodeofconduct.service.CodeOfConductService;
-import me.biquaternions.componentcodeofconduct.util.BinaryUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.translation.Translator;
 import org.apache.commons.lang3.StringUtils;
@@ -62,13 +61,6 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
                                         .withComments()
                                         .load(LocaleConfiguration::new);
                                 config.save();
-                                final byte[] hash;
-                                try {
-                                    hash = BinaryUtils.MD.digest(Files.readAllBytes(path));
-                                } catch (IOException exception) {
-                                    context.getLogger().error("Failed to calculate hash for '{}'", path.getFileName(), exception);
-                                    return;
-                                }
 
                                 Key dialogKey = CodeOfConductKeys.getDialogKey(locale);
                                 event.registry().register(DialogKeys.create(dialogKey), builder -> {
@@ -89,7 +81,7 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
                                                                     .build()
                                             ));
                                 });
-                                CodeOfConductService.putConfigurationForKey(dialogKey, config, hash);
+                                CodeOfConductService.putConfigurationForKey(dialogKey, config);
 
                             });
 

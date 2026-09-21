@@ -103,7 +103,7 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
     }
 
     @Override
-    public JavaPlugin createPlugin(PluginProviderContext context) {
+    public JavaPlugin createPlugin(final PluginProviderContext context) {
         final Path cacheDirectory = context.getDataDirectory().resolve(".cache");
         final StorageFile storage = ConfigurationLoader.from(cacheDirectory.resolve("accepted-code-of-conducts.yml"))
                 .load(StorageFile::new);

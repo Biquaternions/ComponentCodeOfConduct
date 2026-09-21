@@ -43,6 +43,7 @@ tasks {
         mapOf(
             "org.bstats" to "bstats",
             "de.bsommerfeld.jshepherd" to "jshepherd",
+            "org.yaml.snakeyaml" to "snakeyaml",
         ).forEach { (key, value) ->
             relocate(key, "me.biquaternions.componentcodeofconduct.libs.$value")
         }

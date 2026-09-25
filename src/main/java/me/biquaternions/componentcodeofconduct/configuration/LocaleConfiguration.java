@@ -10,6 +10,8 @@ import me.biquaternions.componentcodeofconduct.util.BinaryUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jspecify.annotations.NullMarked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -18,6 +20,8 @@ import java.util.List;
 @NullMarked
 @SuppressWarnings({"NotNullFieldNotInitialized", "FieldMayBeFinal", "unused"})
 public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocaleConfiguration.class);
 
     @SuppressWarnings("NullAway.Init")
     private static LocaleConfiguration FALLBACK;
@@ -66,6 +70,10 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
         @Key("timeout")
         public int timeout = 10;
 
+        @Key("width")
+        private int internalWidth = 200;
+        public transient int width;
+
         @Section("agree")
         public ButtonConfiguration agree = new ButtonConfiguration(
                 "<color:#edc7ff>Paper-chan is cute!</color>",
@@ -105,6 +113,14 @@ public class LocaleConfiguration extends ConfigurablePojo<LocaleConfiguration> {
 
         this.kickMessages.dialogDoesNotExist = miniMessage.deserialize(this.kickMessages.dialogDoesNotExistString);
         this.kickMessages.disagreeButtonClicked = miniMessage.deserialize(this.kickMessages.disagreeButtonClickedString);
+    }
+
+    @PostInject
+    public void validate() {
+        this.codeOfConduct.width = Math.clamp(this.codeOfConduct.internalWidth, 1, 1024);
+        if (this.codeOfConduct.internalWidth < 1 || this.codeOfConduct.internalWidth > 1024) {
+            LOGGER.warn("Width is expected to be between 1 and 1024");
+        }
     }
 
 }

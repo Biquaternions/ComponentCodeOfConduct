@@ -67,7 +67,7 @@ class ComponentCodeOfConductBootstrap implements PluginBootstrap {
                                     // From the paper docs :o
                                     builder.base(DialogBase.builder(config.codeOfConduct.title)
                                                     .canCloseWithEscape(false)
-                                                    .body(config.codeOfConduct.body.stream().map(DialogBody::plainMessage).toList())
+                                                    .body(config.codeOfConduct.body.stream().map(line -> DialogBody.plainMessage(line, config.codeOfConduct.width)).toList())
                                                     .build()
                                             ).type(
                                                     DialogType.confirmation(
